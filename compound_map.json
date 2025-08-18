@@ -1,0 +1,242 @@
+{
+    "Melbourne": {
+        "value": 5.3030,
+        "tires": {
+            "SOFT": 2,
+            "MEDIUM": 3,
+            "HARD": 4,
+            "INTERMEDIATE": 7,
+            "WET": 8
+        }
+    },
+    "Shanghai": {
+        "value": 5.4510,
+        "tires": {
+            "SOFT": 3,
+            "MEDIUM": 4,
+            "HARD": 5,
+            "INTERMEDIATE": 7,
+            "WET": 8
+        }
+    },
+    "Suzuka": {
+        "value": 5.8070,
+        "tires": {
+            "SOFT": 4,
+            "MEDIUM": 5,
+            "HARD": 6,
+            "INTERMEDIATE": 7,
+            "WET": 8
+        }
+    },
+    "Sakhir": {
+        "value": 5.4120,
+        "tires": {
+            "SOFT": 4,
+            "MEDIUM": 5,
+            "HARD": 6,
+            "INTERMEDIATE": 7,
+            "WET": 8
+        }
+    },
+    "Jeddah": {
+        "value": 6.1740,
+        "tires": {
+            "SOFT": 2,
+            "MEDIUM": 3,
+            "HARD": 4,
+            "INTERMEDIATE": 7,
+            "WET": 8
+        }
+    },
+    "Miami": {
+        "value": 5.4120,
+        "tires": {
+            "SOFT": 2,
+            "MEDIUM": 3,
+            "HARD": 4,
+            "INTERMEDIATE": 7,
+            "WET": 8
+        }
+    },
+    "Imola": {
+        "value": 4.9090,
+        "tires": {
+            "SOFT": 1,
+            "MEDIUM": 2,
+            "HARD": 3,
+            "INTERMEDIATE": 7,
+            "WET": 8
+        }
+    },
+    "Monaco": {
+        "value": 3.3370,
+        "tires": {
+            "SOFT": 1,
+            "MEDIUM": 2,
+            "HARD": 3,
+            "INTERMEDIATE": 7,
+            "WET": 8
+        }
+    },
+    "Barcelona": {
+        "value": 4.6570,
+        "tires": {
+            "SOFT": 4,
+            "MEDIUM": 5,
+            "HARD": 6,
+            "INTERMEDIATE": 7,
+            "WET": 8
+        }
+    },
+    "Montréal": {
+        "value": 4.3610,
+        "tires": {
+            "SOFT": 1,
+            "MEDIUM": 2,
+            "HARD": 3,
+            "INTERMEDIATE": 7,
+            "WET": 8
+        }
+    },
+    "Spielberg": {
+        "value": 4.3180,
+        "tires": {
+            "SOFT": 2,
+            "MEDIUM": 3,
+            "HARD": 4,
+            "INTERMEDIATE": 7,
+            "WET": 8
+        }
+    },
+    "Silverstone": {
+        "value": 5.8910,
+        "tires": {
+            "SOFT": 3,
+            "MEDIUM": 4,
+            "HARD": 5,
+            "INTERMEDIATE": 7,
+            "WET": 8
+        }
+    },
+    "Spa-Francorchamps": {
+        "value": 7.0040,
+        "tires": {
+            "SOFT": 3,
+            "MEDIUM": 4,
+            "HARD": 6,
+            "INTERMEDIATE": 7,
+            "WET": 8
+        }
+    },
+    "Budapest": {
+        "value": 4.3810,
+        "tires": {
+            "SOFT": 2,
+            "MEDIUM": 3,
+            "HARD": 4,
+            "INTERMEDIATE": 7,
+            "WET": 8
+        }
+    },
+    "Zandvoort": {
+        "value": 4.2590,
+        "tires": {
+            "SOFT": 1,
+            "MEDIUM": 2,
+            "HARD": 3,
+            "INTERMEDIATE": 7,
+            "WET": 8
+        }
+    },
+    "Monza": {
+        "value": 5.7930,
+        "tires": {
+            "SOFT": 1,
+            "MEDIUM": 2,
+            "HARD": 3,
+            "INTERMEDIATE": 7,
+            "WET": 8
+        }
+    },
+    "Baku": {
+        "value": 6.0030,
+        "tires": {
+            "SOFT": 1,
+            "MEDIUM": 2,
+            "HARD": 3,
+            "INTERMEDIATE": 7,
+            "WET": 8
+        }
+    },
+    "Marina Bay": {
+        "value": 4.9400,
+        "tires": {
+            "SOFT": 1,
+            "MEDIUM": 2,
+            "HARD": 3,
+            "INTERMEDIATE": 7,
+            "WET": 8
+        }
+    },
+    "Austin": {
+        "value": 5.5130,
+        "tires": {
+            "SOFT": 1,
+            "MEDIUM": 2,
+            "HARD": 3,
+            "INTERMEDIATE": 7,
+            "WET": 8
+        }
+    },
+    "Mexico City": {
+        "value": 4.3040,
+        "tires": {
+            "SOFT": 1,
+            "MEDIUM": 2,
+            "HARD": 3,
+            "INTERMEDIATE": 7,
+            "WET": 8
+        }
+    },
+    "São Paulo": {
+        "value": 4.3090,
+        "tires": {
+            "SOFT": 1,
+            "MEDIUM": 2,
+            "HARD": 3,
+            "INTERMEDIATE": 7,
+            "WET": 8
+        }
+    },
+    "Las Vegas": {
+        "value": 6.2010,
+        "tires": {
+            "SOFT": 1,
+            "MEDIUM": 2,
+            "HARD": 3,
+            "INTERMEDIATE": 7,
+            "WET": 8
+        }
+    },
+    "Lusail": {
+        "value": 5.3800,
+        "tires": {
+            "SOFT": 1,
+            "MEDIUM": 2,
+            "HARD": 3,
+            "INTERMEDIATE": 7,
+            "WET": 8
+        }
+    },
+    "Yas Island": {
+        "value": 5.2810,
+        "tires": {
+            "SOFT": 1,
+            "MEDIUM": 2,
+            "HARD": 3,
+            "INTERMEDIATE": 7,
+            "WET": 8
+        }
+    }
+}

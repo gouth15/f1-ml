@@ -1,7 +1,7 @@
 import pandas as pd
 import pickle
 from sklearn.model_selection import train_test_split
-from sklearn.tree import DecisionTreeRegressor
+from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.metrics import root_mean_squared_error
 from pathlib import Path
 
@@ -21,7 +21,9 @@ Y = data[TARGET_COLUMN]
 XTrain, XTest, YTrain, YTest = train_test_split(X, Y, test_size=0.3)
 
 # DEFINE THE MODEL
-model = DecisionTreeRegressor()
+model = GradientBoostingRegressor(
+    n_estimators=500,
+)
 
 # FIT THE MODEL
 model.fit(XTrain, YTrain)
@@ -31,6 +33,6 @@ predictions = model.predict(XTest)
 rmse = root_mean_squared_error(YTest, predictions)
 
 # SAVE THE MODEL
-with open("decisiontree_v1.pkl", "wb") as file:
+with open("model.pkl", "wb") as file:
     pickle.dump(model, file)
 
