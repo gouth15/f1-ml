@@ -37,11 +37,11 @@ for location in COMPLETED_RACES:
         try:
             current_session = fastf1.get_session(CURRENT_YEAR, location, session)
             current_session.load(weather=False, messages=False, telemetry=False)
-            is_header = not CSV_PATH.exists()
             current_data = pd.DataFrame(current_session.laps.pick_quicklaps().pick_accurate())
             current_data["TrackLength"] = TRACK_DETAILS[location]["value"]
             current_data["Location"] = location
             data = pd.concat([data, current_data])
+            print(f"Collected {location} - {session} data")
         except ValueError:
             continue
 

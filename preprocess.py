@@ -23,7 +23,7 @@ data["Compound"] = data.apply(
 # FILTER THE COLUMNS THAT USED FOR TRAINING
 INCLUDE= [
     "DriverNumber", "LapTime", "SpeedI1", "SpeedI2",
-    "SpeedFL", "Compound", "TyreLife", "FreshTyre", "TrackStatus",
+    "SpeedFL", "SpeedST", "Compound", "TyreLife", "FreshTyre", "TrackStatus",
     "TrackLength"]
 data = data[INCLUDE]
 
