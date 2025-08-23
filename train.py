@@ -1,35 +1,88 @@
+# IMPORT LIBRARIES
 import pandas as pd
 import pickle
-from sklearn.model_selection import train_test_split
-from sklearn.ensemble import GradientBoostingRegressor, HistGradientBoostingRegressor, RandomForestRegressor
-from sklearn.metrics import root_mean_squared_error
 from pathlib import Path
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error
+from sklearn.feature_selection import mutual_info_regression
 
-# LOAD THE DATA
-CSV_PATH = Path("new_data.csv")
+import torch
+import torch.nn as nn
+import torch.optim as optim
+
+
+# LOAD DATA
+CSV_PATH = Path("data.csv")
 data = pd.read_csv(CSV_PATH)
 
-# SET THE FEATURE AND TARGET COLUMN
+# DEFINE TARGET AND FEATURES
 TARGET_COLUMN = "LapTime"
-FEATURE_COLUMNS = data.columns.to_list()
-FEATURE_COLUMNS.remove(TARGET_COLUMN)
+FEATURE_COLUMNS = [col for col in data.columns if col not in [TARGET_COLUMN, "DriverNumber"]]
 
 X = data[FEATURE_COLUMNS]
 Y = data[TARGET_COLUMN]
 
-# SPLIT THE TRAIN AND TEST DATA SET
-XTrain, XTest, YTrain, YTest = train_test_split(X, Y, test_size=0.35, random_state=50)
+# SPLIT TRAIN AND TEST SET
+XTrain, XTest, YTrain, YTest = train_test_split(X, Y, test_size=0.30, random_state=42)
 
-# DEFINE THE MODEL
-model = GradientBoostingRegressor(n_estimators=500)
 
-model.fit(XTrain, YTrain)
+# OPTIONAL: FEATURE IMPORTANCE USING MUTUAL INFORMATION
+mi_scores = mutual_info_regression(X, Y)
+feature_importance_df = pd.DataFrame({
+    "Feature": FEATURE_COLUMNS,
+    "MutualInfo": mi_scores
+}).sort_values(by="MutualInfo", ascending=False)
+feature_importance_df.to_csv("feature_importance.csv", index=False)
 
-# PREDICT AND EVALUATE THE ERROR
-predictions = model.predict(XTest)
-rmse = root_mean_squared_error(YTest, predictions)
 
-# SAVE THE MODEL
-with open("v7.pkl", "wb") as file:
-    pickle.dump(model, file)
+# CONVERT DATA TO TORCH TENSORS
+x_train_tensor = torch.tensor(XTrain.values, dtype=torch.float32)
+x_test_tensor = torch.tensor(XTest.values, dtype=torch.float32)
+y_train_tensor = torch.tensor(YTrain.values, dtype=torch.float32).view(-1, 1)
+y_test_tensor = torch.tensor(YTest.values, dtype=torch.float32).view(-1, 1)
 
+
+# DEFINE PYTORCH NEURAL NETWORK
+class NeuralNetwork(nn.Module):
+    def __init__(self, input_size):
+        super(NeuralNetwork, self).__init__()
+        self.layers = nn.Sequential(
+            nn.Linear(input_size, 64),
+            nn.ReLU(),
+            nn.Linear(64, 32),
+            nn.ReLU(),
+            nn.Linear(32, 16),
+            nn.ReLU(),
+            nn.Linear(16, 1)
+        )
+        
+    def forward(self, x):
+        return self.layers(x)
+
+
+# TRAIN MODEL
+model = NeuralNetwork(input_size=XTrain.shape[1])
+criterion = nn.MSELoss()
+optimizer = optim.Adam(model.parameters(), lr=0.01)
+EPOCHS = 500
+
+for epoch in range(1, EPOCHS + 1):
+    optimizer.zero_grad()
+    outputs = model(x_train_tensor)
+    loss = criterion(outputs, y_train_tensor)
+    loss.backward()
+    optimizer.step()
+    print(f"Epoch {epoch}/{EPOCHS} -- Loss: {loss.item():.6f}")
+
+
+# EVALUATE MODEL
+with torch.no_grad():
+    y_pred = model(x_test_tensor)
+    rmse = torch.sqrt(criterion(y_pred, y_test_tensor))
+    print(f"Test RMSE: {rmse.item():.6f}")
+
+
+# SAVE MODEL
+MODEL_PATH = Path("f1-model.pt")
+torch.save(model.state_dict(), MODEL_PATH)
+print(f"Model saved at {MODEL_PATH}")
