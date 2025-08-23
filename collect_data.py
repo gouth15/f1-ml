@@ -1,52 +1,89 @@
-# IMPORT THE NEEDED PACKAGES AND LIBRARIES
+# IMPORT NECESSARY LIBRARIES
 from pathlib import Path
 import fastf1
 from datetime import datetime
 import pandas as pd
-import numpy as np
 import json
-import fastf1.logger
+from fastf1.logger import set_log_level
 from logging import ERROR
+from rich.progress import track
 
-# SET THE FASTF1 LOGGER TO ERROR
-fastf1.logger.set_log_level(ERROR)
+# SET LOGGER TO ERROR
+set_log_level(ERROR)
 
-# SETUP CACHE FOLDER FOR THE DATA
+# SETUP CACHE
 CACHE_DIR = Path("cache")
-CACHE_DIR.mkdir(exist_ok = True)
-fastf1.Cache.enable_cache(cache_dir = str(CACHE_DIR))
+CACHE_DIR.mkdir(exist_ok=True)
+fastf1.Cache.enable_cache(cache_dir=str(CACHE_DIR))
 
-# ASSIGN ALL THE CONSTANT FIELDS
+# CONSTANTS
 CURRENT_YEAR = datetime.today().year
-CSV_PATH = Path("data.csv")
 SESSIONS = ["Sprint", "Race", "Practice 1", "Practice 2", "Practice 3"]
-with open("./compound_map.json", "r") as loader: TRACK_DETAILS = json.load(loader)
 
-# LOAD THE RACE LOCATIONS OF CURRENT SEASON
+# LOAD TRACK DETAILS
+with open("compound_map.json", "r") as f:
+    TRACK_DETAILS = json.load(f)
+
+# LOAD CURRENT SEASON RACE LOCATIONS
 current_season = fastf1.get_event_schedule(CURRENT_YEAR)
-CURRENT_DATE = pd.Timestamp(datetime.now()).normalize()
 current_season["Session5DateUtc"] = pd.to_datetime(current_season["Session5DateUtc"]).dt.tz_localize(None)
+CURRENT_DATE = pd.Timestamp(datetime.now()).normalize()
 COMPLETED_RACES = current_season[current_season["Session5DateUtc"] <= CURRENT_DATE]["Location"].to_list()
 
-# INITIALISE THE DATAFRAME
+# INITIALIZE DATAFRAME
 data = pd.DataFrame()
 
-# GET ALL THE LAP DATA FOR EACH LOCATION UNDER EACH SESSIONS
-for location in COMPLETED_RACES:
+# COLLECT LAP DATA WITH RICH PROGRESS
+for location in track(COMPLETED_RACES, description="[bold green]Fetching races..."):
     for session in SESSIONS:
         try:
             current_session = fastf1.get_session(CURRENT_YEAR, location, session)
-            current_session.load(weather=False, messages=False, telemetry=False)
-            current_data = pd.DataFrame(current_session.laps.pick_quicklaps().pick_accurate())
-            current_data["TrackLength"] = TRACK_DETAILS[location]["value"]
-            current_data["Location"] = location
-            data = pd.concat([data, current_data])
-            print(f"Collected {location} - {session} data")
+            current_session.load(messages=False, telemetry=False)
+            
+            # Load weather and lap data
+            weather_data = pd.DataFrame(current_session.weather_data).sort_values("Time")
+            lap_data = pd.DataFrame(current_session.laps.pick_quicklaps().pick_accurate()).sort_values("Time")
+            
+            # Add track info
+            lap_data["TrackLength"] = TRACK_DETAILS[location]["value"]
+            lap_data["Location"] = location
+            lap_data["Compound"] = lap_data.apply(
+                lambda row: TRACK_DETAILS[row["Location"]]["tires"].get(row["Compound"], None), axis=1
+            )
+            
+            # Merge weather info
+            lap_data = pd.merge_asof(lap_data, weather_data, on="Time", direction="backward")
+            data = pd.concat([data, lap_data], ignore_index=True)
         except ValueError:
             continue
 
-# SAVE THE COLLECTED DATA
-data.to_csv(CSV_PATH, index=False)
+# CONVERT TIMEDelta TO SECONDS
+for col in data.columns:
+    if pd.api.types.is_timedelta64_ns_dtype(data[col]):
+        data[col] = data[col].dt.total_seconds()
 
-print(f"Colleceted data of {data.shape[0]} rows and {data.shape[1]} columns")
+# DROP UNUSED COLUMNS
+drop_cols = [
+    "Driver", "Team", "Location", "PitOutTime", "PitInTime", "LapStartDate",
+    "Deleted", "DeletedReason", "Sector1SessionTime", "Sector2SessionTime",
+    "Sector3SessionTime", "LapStartTime", "Position", "FastF1Generated",
+    "IsAccurate", "TrackStatus", "IsPersonalBest", "LapNumber", "AirTemp",
+    "Time", "SpeedFL", "Stint", "TrackTemp"
+]
+data = data.drop(columns=drop_cols)
 
+# TYPE CASTING
+data[["SpeedI1", "SpeedI2", "SpeedST"]] = data[["SpeedI1", "SpeedI2", "SpeedST"]].astype("Int64")
+data["TyreLife"] = data["TyreLife"].astype("Int64")
+data["FreshTyre"] = data["FreshTyre"].astype(int)
+data["TrackLength"] = data["TrackLength"].astype(float)
+data["Humidity"] = data["Humidity"].astype(float)
+data["Rainfall"] = data["Rainfall"].astype(int)
+
+# REMOVE MISSING VALUES
+data = data.dropna()
+
+# SAVE CLEANED DATA
+data.to_csv("data.csv", index=False)
+
+print(f"Collected data of {data.shape[0]} rows and {data.shape[1]} columns")
