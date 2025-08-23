@@ -75,6 +75,7 @@ data = data.drop(columns=drop_cols)
 # TYPE CASTING
 data[["SpeedI1", "SpeedI2", "SpeedST"]] = data[["SpeedI1", "SpeedI2", "SpeedST"]].astype("Int64")
 data["TyreLife"] = data["TyreLife"].astype("Int64")
+data["DriverNumber"] = data["DriverNumber"].astype(int)
 data["FreshTyre"] = data["FreshTyre"].astype(int)
 data["TrackLength"] = data["TrackLength"].astype(float)
 data["Humidity"] = data["Humidity"].astype(float)
@@ -82,6 +83,10 @@ data["Rainfall"] = data["Rainfall"].astype(int)
 
 # REMOVE MISSING VALUES
 data = data.dropna()
+
+# REMOVE FP1 ROOKIE SESSIONS
+DRIVERS = [1, 4, 5, 6, 10, 12, 14, 16, 18, 22, 23, 27, 30, 31, 44, 55, 63, 81, 87, 43, 7]
+data = data[data["DriverNumber"].isin(DRIVERS)]
 
 # SAVE CLEANED DATA
 data.to_csv("data.csv", index=False)
