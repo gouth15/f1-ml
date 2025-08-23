@@ -10,6 +10,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 
+from model import NeuralNetwork
 
 # LOAD DATA
 CSV_PATH = Path("data.csv")
@@ -40,25 +41,6 @@ x_train_tensor = torch.tensor(XTrain.values, dtype=torch.float32)
 x_test_tensor = torch.tensor(XTest.values, dtype=torch.float32)
 y_train_tensor = torch.tensor(YTrain.values, dtype=torch.float32).view(-1, 1)
 y_test_tensor = torch.tensor(YTest.values, dtype=torch.float32).view(-1, 1)
-
-
-# DEFINE PYTORCH NEURAL NETWORK
-class NeuralNetwork(nn.Module):
-    def __init__(self, input_size):
-        super(NeuralNetwork, self).__init__()
-        self.layers = nn.Sequential(
-            nn.Linear(input_size, 64),
-            nn.ReLU(),
-            nn.Linear(64, 32),
-            nn.ReLU(),
-            nn.Linear(32, 16),
-            nn.ReLU(),
-            nn.Linear(16, 1)
-        )
-        
-    def forward(self, x):
-        return self.layers(x)
-
 
 # TRAIN MODEL
 model = NeuralNetwork(input_size=XTrain.shape[1])
