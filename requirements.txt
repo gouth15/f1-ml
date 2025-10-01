@@ -1,0 +1,19 @@
+# F1 Data Analysis Pipeline Requirements
+
+# Core data processing
+pandas>=1.5.0
+numpy>=1.21.0
+
+# F1 data source
+fastf1>=3.0.0
+
+# Machine learning
+torch>=1.12.0
+scikit-learn>=1.1.0
+
+# Visualization and progress
+rich>=12.0.0
+dataframe-image>=0.1.0
+
+# Additional utilities
+pathlib2>=2.3.0
