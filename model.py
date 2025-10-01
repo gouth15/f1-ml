@@ -2,16 +2,14 @@ import torch.nn as nn
 
 # DEFINE PYTORCH NEURAL NETWORK
 class NeuralNetwork(nn.Module):
-    def __init__(self, input_size):
+    def __init__(self):
         super(NeuralNetwork, self).__init__()
         self.layers = nn.Sequential(
-            nn.Linear(input_size, 64),
-            nn.ReLU(),
-            nn.Linear(64, 32),
+            nn.Linear(11, 32),
             nn.ReLU(),
             nn.Linear(32, 16),
             nn.ReLU(),
-            nn.Linear(16, 1)
+            nn.Linear(16, 1),
         )
         
     def forward(self, x):
